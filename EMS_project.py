@@ -27,7 +27,6 @@ def show_data():
     try:
         conn = get_connection()
         cursor = conn.cursor()
-        # FIX: was querying wrong table "emp_db" — correct table is "employees"
         cursor.execute(
             "SELECT emp_id, emp_name, mob_no, emp_dept, emp_salary FROM employees")
         rows = cursor.fetchall()
@@ -83,8 +82,6 @@ def add_data():
         try:
             conn = get_connection()
             cursor = conn.cursor()
-            # FIX: use parameterized query (prevents SQL injection) and correct table name "employees"
-            # FIX: specify columns explicitly so created_at / updated_at use their DEFAULT values
             cursor.execute(
                 "INSERT INTO employees (emp_id, emp_name, mob_no, emp_dept, emp_salary) VALUES (%s, %s, %s, %s, %s)",
                 (emp_id, emp_name, mob_no, emp_dept, emp_salary)
@@ -126,7 +123,7 @@ def show_salary():
         bg_label = Label(win2, image=bg_image)
         bg_label.place(x=0, y=0, relwidth=1, relheight=1)
         bg_label.lower()
-        win2.bg_image = bg_image  # FIX: keep reference to prevent garbage collection
+        win2.bg_image = bg_image
     except Exception:
         pass  # If background image not found, continue without it
 
@@ -199,14 +196,10 @@ def show_salary():
     )
     b10.place(x=1000, y=500)
 
-    # FIX: removed win2.mainloop() — Toplevel windows should NOT call mainloop()
-    # They share the event loop of the parent window (win)
-
 
 def show_analytics():
     conn = get_connection()
     cur = conn.cursor()
-    # FIX: correct table name from "emp_db" to "employees"
     cur.execute(
         "SELECT COUNT(*), AVG(emp_salary), MAX(emp_salary), MIN(emp_salary) FROM employees")
     result = cur.fetchone()
@@ -247,7 +240,6 @@ def show_analytics():
 
 
 def show_sal(emp_id, result):
-    # FIX: early return was missing after empty-string check
     if emp_id == "":
         result.config(text="Please enter an Employee ID")
         return
@@ -258,7 +250,6 @@ def show_sal(emp_id, result):
     emp_id = int(emp_id)
     conn = get_connection()
     cur = conn.cursor()
-    # FIX: correct table name from "emp_db" to "employees"
     cur.execute(
         "SELECT emp_name, emp_salary FROM employees WHERE emp_id=%s", (emp_id,))
     row = cur.fetchone()
@@ -289,7 +280,6 @@ def delete_data():
         try:
             conn = get_connection()
             cursor = conn.cursor()
-            # FIX: parameterized query + correct table name "employees"
             cursor.execute("DELETE FROM employees WHERE emp_id=%s", (emp_id,))
             conn.commit()
             affected = cursor.rowcount
@@ -322,7 +312,6 @@ def select_emp():
     try:
         conn = get_connection()
         cursor = conn.cursor()
-        # FIX: parameterized query + correct table name "employees"
         cursor.execute(
             "SELECT emp_id, emp_name, mob_no, emp_dept, emp_salary FROM employees WHERE emp_id=%s",
             (emp_id,)
@@ -380,7 +369,6 @@ def update_data():
         try:
             conn = get_connection()
             mycur = conn.cursor()
-            # FIX: parameterized query + correct table name "employees"
             mycur.execute(
                 "UPDATE employees SET emp_name=%s, mob_no=%s, emp_dept=%s, emp_salary=%s WHERE emp_id=%s",
                 (emp_name, mob_no, emp_dept, emp_salary, emp_id)
@@ -447,7 +435,6 @@ def import_excel():
             emp_sal = row["Salary"]
 
             try:
-                # FIX: correct table name "employees"
                 cursor.execute(
                     "INSERT INTO employees (emp_id, emp_name, mob_no, emp_dept, emp_salary) VALUES (%s, %s, %s, %s, %s)",
                     (emp_id, emp_name, emp_mob, emp_dept, emp_sal)
@@ -503,7 +490,6 @@ def import_csv():
             emp_sal = row["Salary"]
 
             try:
-                # FIX: correct table name "employees"
                 cursor.execute(
                     "INSERT INTO employees (emp_id, emp_name, mob_no, emp_dept, emp_salary) VALUES (%s, %s, %s, %s, %s)",
                     (emp_id, emp_name, emp_mob, emp_dept, emp_sal)
@@ -538,7 +524,6 @@ def export_excel():
 
         conn = get_connection()
         cursor = conn.cursor()
-        # FIX: correct table name "employees"
         cursor.execute(
             "SELECT emp_id, emp_name, mob_no, emp_dept, emp_salary FROM employees")
         rows = cursor.fetchall()
@@ -570,7 +555,6 @@ def export_csv():
 
         conn = get_connection()
         cursor = conn.cursor()
-        # FIX: correct table name "employees"
         cursor.execute(
             "SELECT emp_id, emp_name, mob_no, emp_dept, emp_salary FROM employees")
         rows = cursor.fetchall()
@@ -601,7 +585,7 @@ try:
     bg_image = ImageTk.PhotoImage(image)
     bg_label = Label(win, image=bg_image)
     bg_label.place(x=0, y=0, relwidth=1, relheight=1)
-    win.bg_image = bg_image  # FIX: keep reference to prevent garbage collection
+    win.bg_image = bg_image
 except Exception:
     win.config(bg="lightblue")
     # dummy label so bg_label.lower() below doesn't crash
@@ -847,7 +831,7 @@ tree_frame = tk.Frame(win, bg="#4A4A4A", bd=2, relief="solid")
 tree_frame.place(x=748, y=98, height=404, width=704)
 view.lift(tree_frame)
 
-# ── Block column resize and heading click ──  ← KEEP ONLY THIS ONE, DELETE THE OTHER
+# ── Block column resize and heading click ──
 
 
 def block_event(event):

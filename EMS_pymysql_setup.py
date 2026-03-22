@@ -11,10 +11,6 @@ conn = pymysql.connect(
     database="ems_db"       # Database name used throughout the project
 )
 
-# FIX: Renamed table from "emp_db" to "employees" for clarity and consistency.
-# FIX: Added created_at and updated_at audit columns.
-# FIX: emp_id stays as INT PRIMARY KEY (manual entry — no AUTO_INCREMENT).
-
 create_table_query = """
 CREATE TABLE IF NOT EXISTS employees (
     emp_id      INT            NOT NULL PRIMARY KEY,
